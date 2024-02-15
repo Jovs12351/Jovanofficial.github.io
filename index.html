@@ -7,7 +7,7 @@ body {
     margin: 0;
     padding: 0;
     display: flex;
-    justify-content: center;
+    justify-content: center;    
     align-items: center;
     height: 100vh;
 }
@@ -221,21 +221,61 @@ function createConfetti(taskElement) {
     }
 }
 
+// Function to send a notification to a Discord webhook
+function sendNotificationToDiscord(content) {
+    let webhookUrl = 'https://discord.com/api/webhooks/1207661001915506718/SliCW3NUaRmlM2aNiTDCxEf4_HwPTPUwBgEL80yz7WIcz09KPJGDAlNghsIu9pSCL6Ic'; // Replace with your Discord webhook URL
+
+    let message = {
+        content: content,
+        // To mention @everyone, you can add it to the content
+        // But be careful with this, as it will ping everyone in the server
+        // content: '@everyone ' + content,
+        username: 'Notification task!', // Replace with your app's name
+    };
+
+    fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(message),
+    })
+    .then(response => console.log('Notification sent'))
+    .catch(error => console.error('Error:', error));
+}
+
+// Function to check if a task's deadline has passed
+function checkTaskDeadline(task) {
+    let now = new Date();
+    let deadline = new Date(task.deadline);
+    return now > deadline;
+}
+
 // Function to mark a task as done
 function markTaskAsDone(taskId) {
     let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
     for (let task of tasks) {
         if (task.id === taskId) {
             task.done = true;
+            sendNotificationToDiscord('Task ' + taskId + ' has been marked as done');
             break;
         }
     }
     localStorage.setItem('tasks', JSON.stringify(tasks));
-
-    // Create a confetti effect on the task element
-    let taskElement = document.getElementById('task-' + taskId);
-    createConfetti(taskElement);
 }
+
+// Function to check all tasks
+function checkAllTasks() {
+    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    for (let task of tasks) {
+        if (!task.done && checkTaskDeadline(task)) {
+            sendNotificationToDiscord('Task ' + task.id + ' is not done and its deadline has passed');
+        }
+    }
+}
+
+// Call checkAllTasks every hour
+setInterval(checkAllTasks, 60 * 1000);
 
 renderTaskList();</script>
 </body>
