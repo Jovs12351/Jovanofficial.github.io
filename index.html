@@ -1,65 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Under Maintenance</title>
-    <style>@@keyframes swing {
-    0% { transform: rotate(0deg); }
-    20% { transform: rotate(15deg); }
-    40% { transform: rotate(-10deg); }
-    60% { transform: rotate(5deg); }
-    80% { transform: rotate(-5deg); }
-    100% { transform: rotate(0deg); }
-}
-
-@keyframes fadeInSlideUp {
-    0% { opacity: 0; transform: translateY(20px); }
-    100% { opacity: 1; transform: translateY(0); }
-}
-
-body {
-    font-family: 'Roboto', sans-serif;
-    margin: 0;
-    padding: 0;
-    background: #333;
-    color: white;
+    <style>body {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    text-align: center;
+    font-family: Arial, sans-serif;
 }
 
-.container {
-    max-width: 600px;
-    padding: 20px;
-    animation: fadeInSlideUp 2s ease-in-out;
-}
-
-.emoji {
-    font-size: 50px;
-    animation: swing 2s ease-in-out infinite;
-}
-
-h1 {
-    font-family: 'Pacifico', cursive;
-    font-size: 2.5em;
-    margin: 20px 0;
-    animation: fadeInSlideUp 2s ease-in-out;
-}
-
-p {
-    font-size: 1.2em;
-    animation: fadeInSlideUp 2s ease-in-out;
+#notificationButton {
+    padding: 10px 20px;
+    font-size: 20px;
+    cursor: pointer;
 }</style>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <div class="emoji">🔨</div>
-        <h1>Our Website is Under Maintenance</h1>
-        <p>We'll be back soon. Thanks for your patience.</p>
-    </div>
+    <button id="notificationButton">Enable Notifications</button>
+
+    <script>document.getElementById('notificationButton').addEventListener('click', function() {
+    if (!("Notification" in window)) {
+        alert("This browser does not support desktop notification");
+    } else if (Notification.permission === "granted") {
+        alert("You've already granted permission for notifications");
+    } else if (Notification.permission !== 'denied') {
+        Notification.requestPermission().then(function (permission) {
+            if (permission === "granted") {
+                alert("You've granted permission for notifications");
+            }
+        });
+    }
+});</script>
 </body>
 </html>
