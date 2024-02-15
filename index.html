@@ -1,35 +1,242 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <style>body {
+<head> <style>
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #1fa2ff, #12d8fa, #a6ffcb); /* Gradient background */
+    margin: 0;
+    padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    font-family: Arial, sans-serif;
 }
 
-#notificationButton {
-    padding: 10px 20px;
-    font-size: 20px;
+.container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    width: 80%; /* Set a width */
+    max-width: 800px; /* Set a max-width */
+}
+
+#taskForm {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+#taskInput, #deadlineInput {
+    margin-right: 10px;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    outline: none;
+    width: 100%; /* Full width */
+}
+
+#taskInput {
+    flex-grow: 1;
+}
+
+button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
     cursor: pointer;
-}</style>
+    transition: background-color 0.3s ease; /* Transition */
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    background-color: #ddd;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease; /* Transition */
+}
+
+li:hover {
+    background-color: #ccc; /* Hover effect */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+button {
+    margin-right: 5px;
+}
+  @keyframes pop {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(0.5); opacity: 0; }
+  }
+
+  .confetti {
+      position: absolute;
+      animation: pop 1s forwards;
+  }</style>
 </head>
 <body>
-    <button id="notificationButton">Enable Notifications</button>
+    <div class="container">
+        <h1>Task Manager</h1>
+        <form id="taskForm">
+            <input type="text" id="taskInput" placeholder="New task">
+            <input type="datetime-local" id="deadlineInput">
+            <button type="submit">Add Task</button>
+        </form>
+        <table id="taskList"></table>
+    </div>
+    <script>var taskList = JSON.parse(localStorage.getItem('taskList')) || [];
 
-    <script>document.getElementById('notificationButton').addEventListener('click', function() {
-    if (!("Notification" in window)) {
-        alert("This browser does not support desktop notification");
-    } else if (Notification.permission === "granted") {
-        alert("You've already granted permission for notifications");
-    } else if (Notification.permission !== 'denied') {
-        Notification.requestPermission().then(function (permission) {
-            if (permission === "granted") {
-                alert("You've granted permission for notifications");
-            }
+document.getElementById('taskForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    var taskInput = document.getElementById('taskInput');
+    var deadlineInput = document.getElementById('deadlineInput');
+
+    var task = taskInput.value;
+    var deadline = new Date(deadlineInput.value);
+
+    taskList.push({ task: task, deadline: deadline, done: false });
+    localStorage.setItem('taskList', JSON.stringify(taskList));
+
+    renderTaskList();
+
+    taskInput.value = '';
+    deadlineInput.value = '';
+});
+
+function renderTaskList() {
+    var taskListElement = document.getElementById('taskList');
+    taskListElement.innerHTML = '';
+
+    var table = document.createElement('table');
+    var thead = document.createElement('thead');
+    var tbody = document.createElement('tbody');
+
+    var headers = ['Task', 'Deadline', 'Status', 'Actions'];
+    var tr = document.createElement('tr');
+    headers.forEach(function(header) {
+        var th = document.createElement('th');
+        th.textContent = header;
+        tr.appendChild(th);
+    });
+    thead.appendChild(tr);
+    table.appendChild(thead);
+
+    taskList.forEach(function(taskItem, index) {
+        var tr = document.createElement('tr');
+
+        var tdTask = document.createElement('td');
+        tdTask.textContent = taskItem.task;
+        tr.appendChild(tdTask);
+
+        var tdDeadline = document.createElement('td');
+        tdDeadline.textContent = new Date(taskItem.deadline).toLocaleString();
+        tr.appendChild(tdDeadline);
+
+        var tdStatus = document.createElement('td');
+        tdStatus.textContent = taskItem.done ? 'Done' : 'Pending';
+        tr.appendChild(tdStatus);
+
+        var tdActions = document.createElement('td');
+
+        var doneButton = document.createElement('button');
+        doneButton.textContent = 'Done';
+        doneButton.addEventListener('click', function() {
+            taskList[index].done = true;
+            localStorage.setItem('taskList', JSON.stringify(taskList));
+            renderTaskList();
         });
+        tdActions.appendChild(doneButton);
+
+        var deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Delete';
+        deleteButton.addEventListener('click', function() {
+            taskList.splice(index, 1);
+            localStorage.setItem('taskList', JSON.stringify(taskList));
+            renderTaskList();
+        });
+        tdActions.appendChild(deleteButton);
+
+        tr.appendChild(tdActions);
+
+        tbody.appendChild(tr);
+
+        if (!taskItem.done) {
+            var timeUntilDeadline = new Date(taskItem.deadline).getTime() - new Date().getTime();
+            setTimeout(function() {
+                if (Notification.permission === "granted") {
+                    new Notification("Deadline for task '" + taskItem.task + "' is now!");
+                } else if (Notification.permission !== 'denied') {
+                    Notification.requestPermission().then(function (permission) {
+                        if (permission === "granted") {
+                            new Notification("Deadline for task '" + taskItem.task + "' is now!");
+                        }
+                    });
+                }
+            }, timeUntilDeadline);
+        }
+    });
+
+    table.appendChild(tbody);
+    taskListElement.appendChild(table);
+}
+// Function to create a confetti effect
+function createConfetti(taskElement) {
+    for (let i = 0; i < 100; i++) {
+        let confetti = document.createElement('div');
+        confetti.classList.add('confetti');
+        confetti.style.backgroundColor = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet'][Math.floor(Math.random() * 7)];
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.animationDelay = Math.random() * 2 + 's';
+        taskElement.appendChild(confetti);
     }
-});</script>
+}
+
+// Function to mark a task as done
+function markTaskAsDone(taskId) {
+    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    for (let task of tasks) {
+        if (task.id === taskId) {
+            task.done = true;
+            break;
+        }
+    }
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+
+    // Create a confetti effect on the task element
+    let taskElement = document.getElementById('task-' + taskId);
+    createConfetti(taskElement);
+}
+
+renderTaskList();</script>
 </body>
 </html>
