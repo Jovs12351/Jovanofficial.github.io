@@ -1,282 +1,288 @@
 <!DOCTYPE html>
-<html>
-<head> <style>
-body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(to right, #1fa2ff, #12d8fa, #a6ffcb); /* Gradient background */
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;    
-    align-items: center;
-    height: 100vh;
-}
-
-.container {
-    background-color: white;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    width: 80%; /* Set a width */
-    max-width: 800px; /* Set a max-width */
-}
-
-#taskForm {
-    display: flex;
-    margin-bottom: 20px;
-}
-
-#taskInput, #deadlineInput {
-    margin-right: 10px;
-    padding: 5px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    outline: none;
-    width: 100%; /* Full width */
-}
-
-#taskInput {
-    flex-grow: 1;
-}
-
-button {
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease; /* Transition */
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-li {
-    background-color: #ddd;
-    margin-bottom: 10px;
-    padding: 10px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease; /* Transition */
-}
-
-li:hover {
-    background-color: #ccc; /* Hover effect */
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-}
-
-th {
-    background-color: #4CAF50;
-    color: white;
-}
-
-tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
-
-button {
-    margin-right: 5px;
-}
-  @keyframes pop {
-      0% { transform: scale(1); opacity: 1; }
-      100% { transform: scale(0.5); opacity: 0; }
-  }
-
-  .confetti {
-      position: absolute;
-      animation: pop 1s forwards;
-  }</style>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Scheduler with Background Notifications</title>
+    <style>
+        :root {
+            --bg-color: #f0f0f0;
+            --text-color: #333;
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --card-bg: #fff;
+            --input-bg: #fff;
+        }
+        .dark-mode {
+            --bg-color: #2c3e50;
+            --text-color: #ecf0f1;
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --card-bg: #34495e;
+            --input-bg: #2c3e50;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary-color);
+        }
+        .task-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .task-input, .task-datetime, .task-category {
+            padding: 10px;
+            border: 1px solid var(--primary-color);
+            border-radius: 5px;
+            font-size: 16px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+        }
+        .add-btn {
+            grid-column: span 2;
+            padding: 10px 20px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .add-btn:hover {
+            opacity: 0.9;
+        }
+        .task-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .task-item {
+            background-color: var(--card-bg);
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.3s;
+            border: 1px solid var(--primary-color);
+        }
+        .task-item:hover {
+            transform: translateY(-5px);
+        }
+        .task-info {
+            flex-grow: 1;
+        }
+        .task-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .task-details {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        .task-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .complete-btn, .delete-btn {
+            padding: 5px 10px;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .complete-btn {
+            background-color: var(--secondary-color);
+        }
+        .delete-btn {
+            background-color: var(--danger-color);
+        }
+        .complete-btn:hover, .delete-btn:hover {
+            opacity: 0.9;
+        }
+        .completed {
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+        .dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            transition: background-color 0.3s;
+        }
+        .dark-mode-toggle:hover {
+            opacity: 0.9;
+        }
+    </style>
 </head>
 <body>
+    <button id="darkModeToggle" class="dark-mode-toggle">🌓</button>
     <div class="container">
-        <h1>Task Manager</h1>
-        <form id="taskForm">
-            <input type="text" id="taskInput" placeholder="New task">
-            <input type="datetime-local" id="deadlineInput">
-            <button type="submit">Add Task</button>
+        <h1>Task Scheduler</h1>
+        <form id="taskForm" class="task-form">
+            <input type="text" id="taskInput" class="task-input" placeholder="Enter a new task" required>
+            <input type="datetime-local" id="taskDateTime" class="task-datetime" required>
+            <select id="taskCategory" class="task-category" required>
+                <option value="">Select a category</option>
+                <option value="work">Work</option>
+                <option value="personal">Personal</option>
+                <option value="study">Study</option>
+                <option value="other">Other</option>
+            </select>
+            <button type="submit" class="add-btn">Add Task</button>
         </form>
-        <table id="taskList"></table>
+        <ul id="taskList" class="task-list"></ul>
     </div>
-    <script>var taskList = JSON.parse(localStorage.getItem('taskList')) || [];
 
-document.getElementById('taskForm').addEventListener('submit', function(event) {
-    event.preventDefault();
+    <script>
+        // Check if service workers are supported
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    }, err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
 
-    var taskInput = document.getElementById('taskInput');
-    var deadlineInput = document.getElementById('deadlineInput');
+        document.addEventListener('DOMContentLoaded', () => {
+            const taskForm = document.getElementById('taskForm');
+            const taskInput = document.getElementById('taskInput');
+            const taskDateTime = document.getElementById('taskDateTime');
+            const taskCategory = document.getElementById('taskCategory');
+            const taskList = document.getElementById('taskList');
+            const darkModeToggle = document.getElementById('darkModeToggle');
 
-    var task = taskInput.value;
-    var deadline = new Date(deadlineInput.value);
+            let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 
-    taskList.push({ task: task, deadline: deadline, done: false });
-    localStorage.setItem('taskList', JSON.stringify(taskList));
+            function renderTasks() {
+                taskList.innerHTML = '';
+                tasks.forEach((task, index) => {
+                    const taskItem = document.createElement('li');
+                    taskItem.className = `task-item${task.completed ? ' completed' : ''}`;
+                    
+                    const taskInfo = document.createElement('div');
+                    taskInfo.className = 'task-info';
+                    
+                    const taskTitle = document.createElement('div');
+                    taskTitle.className = 'task-title';
+                    taskTitle.textContent = task.title;
+                    
+                    const taskDetails = document.createElement('div');
+                    taskDetails.className = 'task-details';
+                    taskDetails.textContent = `${new Date(task.dateTime).toLocaleString()} | ${task.category}`;
+                    
+                    const taskActions = document.createElement('div');
+                    taskActions.className = 'task-actions';
 
-    renderTaskList();
+                    const completeBtn = document.createElement('button');
+                    completeBtn.textContent = task.completed ? 'Undo' : 'Complete';
+                    completeBtn.className = 'complete-btn';
+                    completeBtn.addEventListener('click', () => toggleTaskCompletion(index));
 
-    taskInput.value = '';
-    deadlineInput.value = '';
-});
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.textContent = 'Delete';
+                    deleteBtn.className = 'delete-btn';
+                    deleteBtn.addEventListener('click', () => deleteTask(index));
 
-function renderTaskList() {
-    var taskListElement = document.getElementById('taskList');
-    taskListElement.innerHTML = '';
+                    taskInfo.appendChild(taskTitle);
+                    taskInfo.appendChild(taskDetails);
+                    taskActions.appendChild(completeBtn);
+                    taskActions.appendChild(deleteBtn);
+                    taskItem.appendChild(taskInfo);
+                    taskItem.appendChild(taskActions);
+                    taskList.appendChild(taskItem);
+                });
+            }
 
-    var table = document.createElement('table');
-    var thead = document.createElement('thead');
-    var tbody = document.createElement('tbody');
+            function addTask(title, dateTime, category) {
+                const newTask = { title, dateTime, category, completed: false };
+                tasks.push(newTask);
+                saveTasks();
+                renderTasks();
+                scheduleNotification(newTask);
+            }
 
-    var headers = ['Task', 'Deadline', 'Status', 'Actions'];
-    var tr = document.createElement('tr');
-    headers.forEach(function(header) {
-        var th = document.createElement('th');
-        th.textContent = header;
-        tr.appendChild(th);
-    });
-    thead.appendChild(tr);
-    table.appendChild(thead);
+            function deleteTask(index) {
+                tasks.splice(index, 1);
+                saveTasks();
+                renderTasks();
+            }
 
-    taskList.forEach(function(taskItem, index) {
-        var tr = document.createElement('tr');
+            function toggleTaskCompletion(index) {
+                tasks[index].completed = !tasks[index].completed;
+                saveTasks();
+                renderTasks();
+            }
 
-        var tdTask = document.createElement('td');
-        tdTask.textContent = taskItem.task;
-        tr.appendChild(tdTask);
+            function saveTasks() {
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+            }
 
-        var tdDeadline = document.createElement('td');
-        tdDeadline.textContent = new Date(taskItem.deadline).toLocaleString();
-        tr.appendChild(tdDeadline);
-
-        var tdStatus = document.createElement('td');
-        tdStatus.textContent = taskItem.done ? 'Done' : 'Pending';
-        tr.appendChild(tdStatus);
-
-        var tdActions = document.createElement('td');
-
-        var doneButton = document.createElement('button');
-        doneButton.textContent = 'Done';
-        doneButton.addEventListener('click', function() {
-            taskList[index].done = true;
-            localStorage.setItem('taskList', JSON.stringify(taskList));
-            renderTaskList();
-        });
-        tdActions.appendChild(doneButton);
-
-        var deleteButton = document.createElement('button');
-        deleteButton.textContent = 'Delete';
-        deleteButton.addEventListener('click', function() {
-            taskList.splice(index, 1);
-            localStorage.setItem('taskList', JSON.stringify(taskList));
-            renderTaskList();
-        });
-        tdActions.appendChild(deleteButton);
-
-        tr.appendChild(tdActions);
-
-        tbody.appendChild(tr);
-
-        if (!taskItem.done) {
-            var timeUntilDeadline = new Date(taskItem.deadline).getTime() - new Date().getTime();
-            setTimeout(function() {
-                if (Notification.permission === "granted") {
-                    new Notification("Deadline for task '" + taskItem.task + "' is now!");
-                } else if (Notification.permission !== 'denied') {
-                    Notification.requestPermission().then(function (permission) {
-                        if (permission === "granted") {
-                            new Notification("Deadline for task '" + taskItem.task + "' is now!");
-                        }
+            function scheduleNotification(task) {
+                if ('serviceWorker' in navigator && 'SyncManager' in window) {
+                    navigator.serviceWorker.ready.then(function(reg) {
+                        reg.sync.register(JSON.stringify(task));
                     });
                 }
-            }, timeUntilDeadline);
-        }
-    });
+            }
 
-    table.appendChild(tbody);
-    taskListElement.appendChild(table);
-}
-// Function to create a confetti effect
-function createConfetti(taskElement) {
-    for (let i = 0; i < 100; i++) {
-        let confetti = document.createElement('div');
-        confetti.classList.add('confetti');
-        confetti.style.backgroundColor = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet'][Math.floor(Math.random() * 7)];
-        confetti.style.left = Math.random() * 100 + '%';
-        confetti.style.animationDelay = Math.random() * 2 + 's';
-        taskElement.appendChild(confetti);
-    }
-}
+            taskForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                addTask(taskInput.value, taskDateTime.value, taskCategory.value);
+                taskInput.value = '';
+                taskDateTime.value = '';
+                taskCategory.value = '';
+            });
 
-// Function to send a notification to a Discord webhook
-function sendNotificationToDiscord(content) {
-    let webhookUrl = 'https://discord.com/api/webhooks/1207661001915506718/SliCW3NUaRmlM2aNiTDCxEf4_HwPTPUwBgEL80yz7WIcz09KPJGDAlNghsIu9pSCL6Ic'; // Replace with your Discord webhook URL
+            darkModeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+                localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+            });
 
-    let message = {
-        content: content,
-        // To mention @everyone, you can add it to the content
-        // But be careful with this, as it will ping everyone in the server
-        // content: '@everyone ' + content,
-        username: 'Notification task!', // Replace with your app's name
-    };
+            // Initialize dark mode
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark-mode');
+            }
 
-    fetch(webhookUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(message),
-    })
-    .then(response => console.log('Notification sent'))
-    .catch(error => console.error('Error:', error));
-}
+            // Request notification permission
+            if ("Notification" in window) {
+                Notification.requestPermission();
+            }
 
-// Function to check if a task's deadline has passed
-function checkTaskDeadline(task) {
-    let now = new Date();
-    let deadline = new Date(task.deadline);
-    return now > deadline;
-}
-
-// Function to mark a task as done
-function markTaskAsDone(taskId) {
-    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-    for (let task of tasks) {
-        if (task.id === taskId) {
-            task.done = true;
-            sendNotificationToDiscord('Task ' + taskId + ' has been marked as done');
-            break;
-        }
-    }
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-}
-
-// Function to check all tasks
-function checkAllTasks() {
-    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-    for (let task of tasks) {
-        if (!task.done && checkTaskDeadline(task)) {
-            sendNotificationToDiscord('Task ' + task.id + ' is not done and its deadline has passed');
-        }
-    }
-}
-
-// Call checkAllTasks every hour
-setInterval(checkAllTasks, 60 * 1000);
-
-renderTaskList();</script>
+            renderTasks();
+        });
+    </script>
 </body>
 </html>
