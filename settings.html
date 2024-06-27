@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Scheduler Settings</title>
+    <style>
+        :root {
+            --bg-color: #f0f0f0;
+            --text-color: #333;
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --card-bg: #fff;
+            --input-bg: #fff;
+        }
+        .dark-mode {
+            --bg-color: #2c3e50;
+            --text-color: #ecf0f1;
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --card-bg: #34495e;
+            --input-bg: #2c3e50;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary-color);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="checkbox"], input[type="url"] {
+            margin-right: 10px;
+        }
+        input[type="url"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--primary-color);
+            border-radius: 5px;
+            font-size: 16px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+        }
+        button {
+            padding: 10px 20px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Settings</h1>
+        <form id="settingsForm">
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="webhookEnabled"> Enable webhook notifications
+                </label>
+            </div>
+            <div class="form-group">
+                <label for="webhookUrl">Webhook URL:</label>
+                <input type="url" id="webhookUrl" placeholder="https://example.com/webhook">
+            </div>
+            <button type="submit">Save Settings</button>
+        </form>
+        <a href="index.html" class="back-btn">← Back to Task Scheduler</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const settingsForm = document.getElementById('settingsForm');
+            const webhookEnabledCheckbox = document.getElementById('webhookEnabled');
+            const webhookUrlInput = document.getElementById('webhookUrl');
+
+            // Load saved settings
+            webhookEnabledCheckbox.checked = localStorage.getItem('webhookEnabled') === 'true';
+            webhookUrlInput.value = localStorage.getItem('webhookUrl') || '';
+
+            settingsForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                // Save settings
+                localStorage.setItem('webhookEnabled', webhookEnabledCheckbox.checked);
+                localStorage.setItem('webhookUrl', webhookUrlInput.value);
+
+                alert('Settings saved successfully!');
+            });
+        });
+    </script>
+</body>
+</html>
