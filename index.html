@@ -190,9 +190,26 @@
         input:not(:checked) + .slider .slider-icon:last-child {
             opacity: 0;
         }
+        .settings-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .settings-btn:hover {
+            opacity: 0.9;
+        }
     </style>
-    </head>
-    <body>
+</head>
+<body>
+    <button class="settings-btn" onclick="window.location.href='settings.html'">⚙️ Settings</button>
     <label class="switch">
         <input type="checkbox" id="darkModeToggle">
         <span class="slider round">
@@ -309,6 +326,43 @@
                     navigator.serviceWorker.ready.then(function(reg) {
                         reg.sync.register(JSON.stringify(task));
                     });
+                }
+
+                // Check if webhook is enabled and send notification
+                const webhookEnabled = localStorage.getItem('webhookEnabled') === 'true';
+                const webhookUrl = localStorage.getItem('webhookUrl');
+
+                if (webhookEnabled && webhookUrl) {
+                    const notificationData = {
+                        title: task.title,
+                        dateTime: task.dateTime,
+                        category: task.category
+                    };
+
+                    console.log('Attempting to send webhook notification to:', webhookUrl);
+                    console.log('Notification data:', notificationData);
+
+                    fetch(webhookUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(notificationData),
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        console.log('Webhook notification sent successfully');
+                        return response.text();
+                    })
+                    .then(data => console.log('Response from webhook:', data))
+                    .catch(error => {
+                        console.error('Error sending webhook notification:', error);
+                        alert('Failed to send webhook notification. Please check the webhook URL in settings and try again.');
+                    });
+                } else {
+                    console.log('Webhook notifications are disabled or URL is not set');
                 }
             }
 
