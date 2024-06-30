@@ -70,7 +70,7 @@
             margin-top: 5px;
         }
 
-        .form__button {
+        .button {
             padding: 10px 20px;
             background-color: var(--color-secondary);
             color: white;
@@ -78,11 +78,14 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
-            transition: background-color 0.3s;
+            transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        .form__button:hover {
+        .button:hover {
             opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .back-link {
@@ -114,10 +117,21 @@
             top: 20px;
             right: 20px;
         }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <div class="navigation">
+            <a href="index.html" class="back-link">← Back to Task Scheduler</a>
+            <button id="themeToggle" class="button">Toggle Dark Mode</button>
+        </div>
         <h1 class="heading">Settings</h1>
         <form id="settingsForm" class="form">
             <div class="form__group">
@@ -130,14 +144,12 @@
                 <input type="url" id="webhookUrl" class="form__input form__input--url" placeholder="https://example.com/webhook">
                 <div id="urlValidationMessage" class="message"></div>
             </div>
-            <button type="submit" class="form__button">Save Settings</button>
+            <button type="submit" class="button">Save Settings</button>
         </form>
         <div id="saveMessage" class="message"></div>
-        <a href="index.html" class="back-link">← Back to Task Scheduler</a>
     </div>
-    <button id="themeToggle" class="theme-toggle">Toggle Dark Mode</button>
 
-    <script>
+     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const settingsForm = document.getElementById('settingsForm');
             const webhookEnabledCheckbox = document.getElementById('webhookEnabled');
