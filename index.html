@@ -126,70 +126,6 @@
             opacity: 0.6;
             text-decoration: line-through;
         }
-        .switch {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            display: inline-block;
-            width: 60px;
-            height: 34px;
-        }
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #2196F3;
-            transition: .4s;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 5px;
-        }
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            z-index: 2;
-        }
-        input:checked + .slider {
-            background-color: #2c3e50;
-        }
-        input:focus + .slider {
-            box-shadow: 0 0 1px #2196F3;
-        }
-        input:checked + .slider:before {
-            transform: translateX(26px);
-        }
-        .slider.round {
-            border-radius: 34px;
-        }
-        .slider.round:before {
-            border-radius: 50%;
-        }
-        .slider-icon {
-            z-index: 1;
-            font-size: 18px;
-            transition: opacity 0.2s;
-        }
-        input:checked + .slider .slider-icon:first-child {
-            opacity: 0;
-        }
-        input:not(:checked) + .slider .slider-icon:last-child {
-            opacity: 0;
-        }
         .settings-btn {
             position: fixed;
             top: 20px;
@@ -206,16 +142,69 @@
         .settings-btn:hover {
             opacity: 0.9;
         }
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+        }
+        .theme-toggle__input {
+            display: none;
+        }
+        .theme-toggle__slider {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+            background-color: #3498db;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .theme-toggle__slider::before {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 26px;
+            height: 26px;
+            background-color: #fff;
+            border-radius: 50%;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        .theme-toggle__input:checked + .theme-toggle__slider {
+            background-color: #34495e;
+        }
+        .theme-toggle__input:checked + .theme-toggle__slider::before {
+            transform: translateX(30px);
+            background-color: #34495e;
+        }
+        .theme-toggle__slider::after {
+            content: "☀️";
+            position: absolute;
+            top: 50%;
+            left: 8px;
+            transform: translateY(-50%);
+            font-size: 14px;
+        }
+        .theme-toggle__input:checked + .theme-toggle__slider::after {
+            content: "🌙";
+            left: auto;
+            right: 8px;
+        }
+        .theme-toggle:hover .theme-toggle__slider::before {
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
     </style>
 </head>
 <body>
     <button class="settings-btn" onclick="window.location.href='settings.html'">⚙️ Settings</button>
-    <label class="switch">
-        <input type="checkbox" id="darkModeToggle">
-        <span class="slider round">
-            <span class="slider-icon">🌞</span>
-            <span class="slider-icon">🌙</span>
-        </span>
+    <label class="theme-toggle">
+        <input type="checkbox" class="theme-toggle__input" id="themeToggle">
+        <span class="theme-toggle__slider"></span>
     </label>
     <div class="container">
         <h1>Task Scheduler</h1>
@@ -253,7 +242,7 @@
             const taskDateTime = document.getElementById('taskDateTime');
             const taskCategory = document.getElementById('taskCategory');
             const taskList = document.getElementById('taskList');
-            const darkModeToggle = document.getElementById('darkModeToggle');
+            const themeToggle = document.getElementById('themeToggle');
 
             let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 
@@ -374,7 +363,7 @@
                 taskCategory.value = '';
             });
 
-            darkModeToggle.addEventListener('change', () => {
+            themeToggle.addEventListener('change', () => {
                 document.body.classList.toggle('dark-mode');
                 localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
             });
@@ -382,7 +371,7 @@
             // Initialize dark mode
             if (localStorage.getItem('darkMode') === 'true') {
                 document.body.classList.add('dark-mode');
-                darkModeToggle.checked = true;
+                themeToggle.checked = true;
             }
 
             // Request notification permission
