@@ -5,59 +5,110 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Site Under Maintenance</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Poppins', sans-serif;
             line-height: 1.6;
             color: #333;
-            background-color: #f4f4f4;
             margin: 0;
             padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
         }
 
         .container {
             max-width: 800px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 40px;
             text-align: center;
-            background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
         }
 
         h1 {
-            font-size: 3rem;
+            font-size: 3.5rem;
             font-weight: 700;
             color: #2c3e50;
             margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
 
         h2 {
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: 600;
             color: #34495e;
             margin-bottom: 15px;
         }
 
         p {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             margin-bottom: 20px;
+            color: #555;
         }
 
         .illustration {
             max-width: 100%;
             height: auto;
             margin-bottom: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .illustration:hover {
+            transform: scale(1.05);
         }
 
         #countdown {
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: 600;
             color: #e74c3c;
             margin: 30px 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .countdown-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .countdown-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .countdown-value {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #3498db;
+        }
+
+        .countdown-label {
+            font-size: 1rem;
+            color: #7f8c8d;
+            text-transform: uppercase;
         }
     </style>
 </head>
@@ -67,12 +118,24 @@
         <img src="https://th.bing.com/th/id/OIP.v-yWwFf-JNvA_HF4e4DYjgHaHa?rs=1&pid=ImgDetMain" alt="Car being towed" class="illustration">
         <h2>We'll be back soon!</h2>
         <p>We're currently performing some scheduled maintenance. We'll be back up shortly.</p>
-        <div id="countdown">00:00:00</div>
+        <div class="countdown-container" id="countdown">
+            <div class="countdown-item">
+                <span class="countdown-value" id="hours">00</span>
+                <span class="countdown-label">Hours</span>
+            </div>
+            <div class="countdown-item">
+                <span class="countdown-value" id="minutes">00</span>
+                <span class="countdown-label">Minutes</span>
+            </div>
+            <div class="countdown-item">
+                <span class="countdown-value" id="seconds">00</span>
+                <span class="countdown-label">Seconds</span>
+            </div>
+        </div>
     </div>
-
     <script>
         // Set the date we're counting down to
-        const countDownDate = new Date("July 5, 2024 1:37:25").getTime();
+        const countDownDate = new Date("Jul 1, 2024 12:37:25").getTime();
 
         // Update the count down every 1 second
         const x = setInterval(function() {
@@ -88,13 +151,14 @@
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
             // Display the result in the element with id="countdown"
-            document.getElementById("countdown").innerHTML = hours + "h "
-            + minutes + "m " + seconds + "s ";
+            document.getElementById("hours").textContent = hours.toString().padStart(2, '0');
+            document.getElementById("minutes").textContent = minutes.toString().padStart(2, '0');
+            document.getElementById("seconds").textContent = seconds.toString().padStart(2, '0');
 
             // If the count down is finished, write some text
             if (distance < 0) {
                 clearInterval(x);
-                document.getElementById("countdown").innerHTML = "EXPIRED";
+                document.getElementById("countdown").innerHTML = "<h2>We're Back!</h2>";
             }
         }, 1000);
     </script>
