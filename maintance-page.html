@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site Under Maintenance</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #34495e;
+            margin-bottom: 15px;
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .illustration {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 30px;
+        }
+
+        #countdown {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #e74c3c;
+            margin: 30px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Site Under Maintenance</h1>
+        <img src="https://example.com/car-towing-illustration.svg" alt="Car being towed" class="illustration">
+        <h2>We'll be back soon!</h2>
+        <p>We're currently performing some scheduled maintenance. We'll be back up shortly.</p>
+        <div id="countdown">00:00:00</div>
+    </div>
+
+    <script>
+        // Set the date we're counting down to
+        const countDownDate = new Date("July 5, 2024 15:37:25").getTime();
+
+        // Update the count down every 1 second
+        const x = setInterval(function() {
+            // Get today's date and time
+            const now = new Date().getTime();
+
+            // Find the distance between now and the count down date
+            const distance = countDownDate - now;
+
+            // Time calculations for hours, minutes and seconds
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // Display the result in the element with id="countdown"
+            document.getElementById("countdown").innerHTML = hours + "h "
+            + minutes + "m " + seconds + "s ";
+
+            // If the count down is finished, write some text
+            if (distance < 0) {
+                clearInterval(x);
+                document.getElementById("countdown").innerHTML = "EXPIRED";
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
