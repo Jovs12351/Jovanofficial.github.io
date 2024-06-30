@@ -6,64 +6,73 @@
     <title>Task Scheduler Settings</title>
     <style>
         :root {
-            --bg-color: #f0f0f0;
-            --text-color: #333;
-            --primary-color: #3498db;
-            --secondary-color: #2ecc71;
-            --card-bg: #fff;
-            --input-bg: #fff;
+            --color-bg: #f0f0f0;
+            --color-text: #333;
+            --color-primary: #3498db;
+            --color-secondary: #2ecc71;
+            --color-card-bg: #fff;
+            --color-input-bg: #fff;
+            --color-error: #e74c3c;
+            --color-success: #27ae60;
         }
+
         .dark-mode {
-            --bg-color: #2c3e50;
-            --text-color: #ecf0f1;
-            --primary-color: #3498db;
-            --secondary-color: #2ecc71;
-            --card-bg: #34495e;
-            --input-bg: #2c3e50;
+            --color-bg: #2c3e50;
+            --color-text: #ecf0f1;
+            --color-card-bg: #34495e;
+            --color-input-bg: #2c3e50;
         }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background-color: var(--color-bg);
+            color: var(--color-text);
             margin: 0;
             padding: 20px;
             transition: background-color 0.3s, color 0.3s;
         }
+
         .container {
             max-width: 600px;
             margin: 0 auto;
-            background-color: var(--card-bg);
+            background-color: var(--color-card-bg);
             border-radius: 15px;
             padding: 30px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        h1 {
+
+        .heading {
             text-align: center;
             margin-bottom: 30px;
-            color: var(--primary-color);
+            color: var(--color-primary);
         }
-        .form-group {
+
+        .form__group {
             margin-bottom: 20px;
         }
-        label {
+
+        .form__label {
             display: block;
             margin-bottom: 5px;
         }
-        input[type="checkbox"], input[type="url"] {
-            margin-right: 10px;
-        }
-        input[type="url"] {
+
+        .form__input {
             width: 100%;
             padding: 10px;
-            border: 1px solid var(--primary-color);
+            border: 1px solid var(--color-primary);
             border-radius: 5px;
             font-size: 16px;
-            background-color: var(--input-bg);
-            color: var(--text-color);
+            background-color: var(--color-input-bg);
+            color: var(--color-text);
         }
-        button {
+
+        .form__input--url {
+            margin-top: 5px;
+        }
+
+        .form__button {
             padding: 10px 20px;
-            background-color: var(--secondary-color);
+            background-color: var(--color-secondary);
             color: white;
             border: none;
             border-radius: 5px;
@@ -71,53 +80,146 @@
             font-size: 16px;
             transition: background-color 0.3s;
         }
-        button:hover {
+
+        .form__button:hover {
             opacity: 0.9;
         }
-        .back-btn {
+
+        .back-link {
             display: inline-block;
             margin-top: 20px;
             text-decoration: none;
-            color: var(--primary-color);
+            color: var(--color-primary);
+        }
+
+        .message {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .message--error {
+            background-color: var(--color-error);
+            color: white;
+        }
+
+        .message--success {
+            background-color: var(--color-success);
+            color: white;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Settings</h1>
-        <form id="settingsForm">
-            <div class="form-group">
-                <label>
-                    <input type="checkbox" id="webhookEnabled"> Enable webhook notifications
+        <h1 class="heading">Settings</h1>
+        <form id="settingsForm" class="form">
+            <div class="form__group">
+                <label class="form__label">
+                    <input type="checkbox" id="webhookEnabled" class="form__input form__input--checkbox"> Enable webhook notifications
                 </label>
             </div>
-            <div class="form-group">
-                <label for="webhookUrl">Webhook URL:</label>
-                <input type="url" id="webhookUrl" placeholder="https://example.com/webhook">
+            <div class="form__group">
+                <label for="webhookUrl" class="form__label">Webhook URL:</label>
+                <input type="url" id="webhookUrl" class="form__input form__input--url" placeholder="https://example.com/webhook">
+                <div id="urlValidationMessage" class="message"></div>
             </div>
-            <button type="submit">Save Settings</button>
+            <button type="submit" class="form__button">Save Settings</button>
         </form>
-        <a href="index.html" class="back-btn">← Back to Task Scheduler</a>
+        <div id="saveMessage" class="message"></div>
+        <a href="index.html" class="back-link">← Back to Task Scheduler</a>
     </div>
+    <button id="themeToggle" class="theme-toggle">Toggle Dark Mode</button>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const settingsForm = document.getElementById('settingsForm');
             const webhookEnabledCheckbox = document.getElementById('webhookEnabled');
             const webhookUrlInput = document.getElementById('webhookUrl');
+            const urlValidationMessage = document.getElementById('urlValidationMessage');
+            const saveMessage = document.getElementById('saveMessage');
+            const themeToggle = document.getElementById('themeToggle');
 
             // Load saved settings
             webhookEnabledCheckbox.checked = localStorage.getItem('webhookEnabled') === 'true';
             webhookUrlInput.value = localStorage.getItem('webhookUrl') || '';
 
-            settingsForm.addEventListener('submit', (e) => {
+            // Theme toggle
+            const toggleTheme = () => {
+                document.body.classList.toggle('dark-mode');
+                localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+            };
+
+            themeToggle.addEventListener('click', toggleTheme);
+
+            // Set initial theme
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark-mode');
+            }
+
+            // Real-time webhook URL validation
+            const validateWebhookUrl = () => {
+                const url = webhookUrlInput.value.trim();
+                if (url === '') {
+                    urlValidationMessage.textContent = '';
+                    return;
+                }
+
+                try {
+                    new URL(url);
+                    urlValidationMessage.textContent = 'Valid URL';
+                    urlValidationMessage.className = 'message message--success';
+                } catch (error) {
+                    urlValidationMessage.textContent = 'Invalid URL';
+                    urlValidationMessage.className = 'message message--error';
+                }
+            };
+
+            webhookUrlInput.addEventListener('input', validateWebhookUrl);
+
+            // Form submission
+            settingsForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
+
+                // Validate URL before saving
+                validateWebhookUrl();
+                if (urlValidationMessage.classList.contains('message--error')) {
+                    saveMessage.textContent = 'Please enter a valid webhook URL';
+                    saveMessage.className = 'message message--error';
+                    return;
+                }
 
                 // Save settings
                 localStorage.setItem('webhookEnabled', webhookEnabledCheckbox.checked);
                 localStorage.setItem('webhookUrl', webhookUrlInput.value);
 
-                alert('Settings saved successfully!');
+                // Simulate webhook request
+                try {
+                    const response = await fetch(webhookUrlInput.value, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ message: 'Settings updated' }),
+                    });
+
+                    if (response.ok) {
+                        saveMessage.textContent = 'Settings saved successfully!';
+                        saveMessage.className = 'message message--success';
+                    } else {
+                        throw new Error('Webhook request failed');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    saveMessage.textContent = 'Settings saved, but webhook test failed';
+                    saveMessage.className = 'message message--error';
+                }
             });
         });
     </script>
