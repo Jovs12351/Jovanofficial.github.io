@@ -90,7 +90,6 @@
 
         .back-link {
             display: inline-block;
-            margin-top: 20px;
             text-decoration: none;
             color: var(--color-primary);
         }
@@ -112,17 +111,57 @@
             color: white;
         }
 
-        .theme-toggle {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-        }
-
         .navigation {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+        }
+
+        .theme-toggle {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background-color: #3498db;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .theme-toggle__input {
+            display: none;
+        }
+
+        .theme-toggle__slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 26px;
+            height: 26px;
+            background-color: #fff;
+            border-radius: 50%;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .theme-toggle__input:checked + .theme-toggle__slider {
+            transform: translateX(30px);
+            background-color: #34495e;
+        }
+
+        .theme-toggle__input:checked + .theme-toggle__slider::before {
+            content: "🌙";
+        }
+
+        .theme-toggle__slider::before {
+            content: "☀️";
+        }
+
+        .theme-toggle:hover .theme-toggle__slider {
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
         }
     </style>
 </head>
@@ -130,7 +169,10 @@
     <div class="container">
         <div class="navigation">
             <a href="index.html" class="back-link">← Back to Task Scheduler</a>
-            <button id="themeToggle" class="button">Toggle Dark Mode</button>
+            <label class="theme-toggle">
+                <input type="checkbox" class="theme-toggle__input" id="themeToggle">
+                <span class="theme-toggle__slider"></span>
+            </label>
         </div>
         <h1 class="heading">Settings</h1>
         <form id="settingsForm" class="form">
@@ -149,7 +191,7 @@
         <div id="saveMessage" class="message"></div>
     </div>
 
-     <script>
+    <script>
         document.addEventListener('DOMContentLoaded', () => {
             const settingsForm = document.getElementById('settingsForm');
             const webhookEnabledCheckbox = document.getElementById('webhookEnabled');
@@ -168,11 +210,12 @@
                 localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
             };
 
-            themeToggle.addEventListener('click', toggleTheme);
+            themeToggle.addEventListener('change', toggleTheme);
 
             // Set initial theme
             if (localStorage.getItem('darkMode') === 'true') {
                 document.body.classList.add('dark-mode');
+                themeToggle.checked = true;
             }
 
             // Real-time webhook URL validation
